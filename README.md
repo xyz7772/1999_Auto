@@ -1,15 +1,15 @@
 # 1999_Auto
-用于1999肉鸽模式，自动化流程
+用于1999肉鸽模式，自动化流程 （弱智版）
 
 ## 操作系统要求
 Windows
 ## 软件和代码解释器要求
-MuMu模拟器12: 用于运行肉鸽游戏。
+MuMu模拟器12: 用于运行重返未来1999。
 Python 3.9: 由于TensorFlow与Python 3.12不兼容，请确保使用Python 3.9。可以从Python官网下载。
 ## 使用方法
 1.准备工作:
 
-确保已安装Python 3.9，并且设置了环境变量，以便在命令行中直接使用python命令。
+确保已安装Python 3.9。
 安装所需的Python库。可以通过在命令行中运行以下命令来安装：
 
 pip install pywin32 opencv-python numpy pyautogui pygetwindow tensorflow keyboard scikit-image
