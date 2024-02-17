@@ -34,7 +34,7 @@ def capture_screenshot(hwnd):
     win32gui.ReleaseDC(hwnd, window_dc)
     return img[:, :, :3]
 
-def find_model_file(filename="1999_auto.keras"):
+def find_model_file(filename="1999_auto_v2.keras"):
     current_dir = os.path.dirname(os.path.abspath(__file__))
     model_path = os.path.join(current_dir, filename)
     if os.path.exists(model_path):
@@ -58,7 +58,8 @@ else:
     print("错误：模型文件不存在。")
 
 # class_indices：
-train_class_indices = {'award': 0, 'dialogs': 1, 'scene': 2, 'shop': 3, 'start': 4, 'up': 5, 'wait': 6,'wait_action': 7}
+train_class_indices = {'award': 0, 'dialogs': 1, 'scene': 2, 'shop': 3, 'start': 4, 'upgrade': 5, 'wait': 6,
+                       'wait_action': 7, 'wait_sub': 8}
 
 # 从索引映射回类别名称
 label_map = dict((v, k) for k, v in train_class_indices.items())
@@ -93,26 +94,25 @@ relative_pos_shop4 = (1343, 623)
 relative_pos_shop5 = (1358, 1011)
 relative_pos_shop6 = (1001, 1021)
 
-
 try:
     while True:
         if check_for_exit():  # 检查是否需要退出
             break
-        windows = gw.getWindowsWithTitle('MuMu模拟器12')
+        windows = gw.getWindowsWithTitle('MuMu模拟器12') #模拟器分辨率设置 1920x1080 280DPI
         if windows:
             window = windows[0]
-            hwnd = window._hWnd  # 确保这是获取窗口句柄的正确方法
+            hwnd = window._hWnd
             current_screenshot = capture_screenshot(hwnd)
 
             # 将OpenCV格式的图像转换为适合模型预测的格式
-            img_array = cv2.resize(current_screenshot, (150, 200))  # 调整图像大小
+            img_array = cv2.resize(current_screenshot, (150, 250))  # 调整图像大小
             img_array = img_array.astype('float32') / 255.0  # 归一化
             img_array = np.expand_dims(img_array, axis=0)  # 增加批次维度
 
             # 预测并获取类别名称
             prediction = model.predict(img_array)
-            predicted_class_index = np.argmax(prediction[0])  # 获取预测的类别索引
-            predicted_class_name = label_map[predicted_class_index]  # 根据索引获取类别名称
+            predicted_class_index = np.argmax(prediction[0])
+            predicted_class_name = label_map[predicted_class_index]
             print(f"current state: {predicted_class_name}")
             time.sleep(1)
             # 根据预测结果执行特定操作的代码
@@ -135,10 +135,11 @@ try:
                                               win_pos[1] + relative_pos3[1])
                 # 点击
                 pyautogui.click(absolute_pos_double_click1)
+                time.sleep(0.5)
                 pyautogui.click(absolute_pos_double_click2)
                 time.sleep(0.5)
                 pyautogui.click(absolute_pos_double_click3)
-                time.sleep(1)
+                time.sleep(0.5)
 
             elif predicted_class_index == 1:
                 win_pos = window.topleft
@@ -156,12 +157,10 @@ try:
                                               win_pos[1] + relative_pos4[1])
                 # 点击
                 pyautogui.click(absolute_pos_double_click1)
-                time.sleep(0.5)
-                pyautogui.click(absolute_pos_double_click2, clicks=2, interval=0.5)
-                time.sleep(0.5)
-                pyautogui.click(absolute_pos_double_click3, clicks=2, interval=0.5)
-                time.sleep(0.5)
-                pyautogui.click(absolute_pos_double_click4, clicks=2, interval=0.5)
+                pyautogui.click(absolute_pos_double_click2, clicks=2, interval=0.25)
+                pyautogui.click(absolute_pos_double_click3, clicks=2, interval=0.25)
+                pyautogui.click(absolute_pos_double_click4, clicks=2, interval=0.25)
+                time.sleep(2)
             elif predicted_class_index == 2:
                 win_pos = window.topleft
                 relative_pos1 = relative_pos_scene2
@@ -275,7 +274,15 @@ try:
                                               win_pos[1] + relative_pos1[1])
                 # 点击
                 pyautogui.click(absolute_pos_double_click1, clicks=2, interval=0.75)
-                time.sleep(1)
+                time.sleep(2)
+            elif predicted_class_index == 8:
+                win_pos = window.topleft
+                relative_pos1 = relative_pos_action
+                absolute_pos_double_click1 = (win_pos[0] + relative_pos1[0],
+                                              win_pos[1] + relative_pos1[1])
+                # 点击
+                pyautogui.click(absolute_pos_double_click1)
+                time.sleep(2)
         else:
             print("没有找到窗口")
             time.sleep(2)
