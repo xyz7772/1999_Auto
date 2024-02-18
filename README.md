@@ -15,7 +15,8 @@ python 3.6之前可以使用tensorflow1.x版本，用法是from keras.models imp
 确保已安装Python 3.9。
 安装所需的Python库。可以通过在命令行中运行以下命令来安装：
 
-pip install pywin32 opencv-python numpy pyautogui pygetwindow tensorflow keyboard scikit-image
+pip install pywin32 opencv-python numpy pyautogui pygetwindow tensorflow==2.15 keyboard scikit-image
+
 
 2.运行游戏:
 
