@@ -21,7 +21,7 @@ pip install pywin32 opencv-python numpy pyautogui pygetwindow tensorflow keyboar
 3.运行脚本:
 
 使用PyCharm（推荐）或其他Python IDE打开main.py脚本。
-确保MuMu模拟器窗口处于打开状态（不要开全屏），并且游戏已经进入肉鸽模式。
+确保MuMu模拟器窗口处于打开状态，并且游戏已经进入肉鸽模式。
 在PyCharm中运行main.py。
 
 4.适用：
@@ -33,11 +33,13 @@ pip install pywin32 opencv-python numpy pyautogui pygetwindow tensorflow keyboar
 主c放4号位，副c放3号位，强烈建议带上一个盾和奶妈（小叶优先）
 
 6.备注:
+*似乎一些人出现了关于模拟器适配问题而点击无效，首先是调整模拟器分辨率设置为1920x1080,280DPI， 如果设置后依然点击无效，请调整一下窗口大小（点击超出范围则调大，小于范围则缩小）。这几天比较忙，之后想办法优化这里。
+
 
 运行时尽量保证模拟器在前台，后台运行可能会操作失败
 确保模型文件1999auto.keras与脚本处于同一目录下
-可能出现点击无效的情况，需要调整模拟器窗口大小以适配（调整模拟器分辨率设置为1920x1080,280DPI），或者使用Find_pos.py手动校准位置
-出现运行问题/卡住 请重启脚本并截图发送到2248389930@qq.com
+使用Find_pos.py手动寻找新的点击位置并替换代码中Relative_pos_xxxx部分
+出现运行问题/卡住 请重启脚本并截图评论（页面上方issue）或发送到2248389930@qq.com
 
 
 
