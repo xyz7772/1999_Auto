@@ -5,7 +5,10 @@
 Windows
 ## 软件和代码解释器要求
 MuMu模拟器12: 用于运行重返未来1999。
-Python 3.9: 由于TensorFlow与Python 3.12不兼容，请确保使用Python 3.9。可以从Python官网下载。
+Python 3.9: 由于最新TensorFlow2.x版本与Python 3.12不兼容，请确保使用Python 3.9。可以从Python官网下载。
+python 3.6之前可以使用tensorflow1.x版本，用法是from keras.models import load_model  替换main.py中的from tensorflow.keras.models import load_model
+
+
 ## 使用方法
 1.准备工作:
 
