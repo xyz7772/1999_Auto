@@ -127,7 +127,7 @@ relative_pos_shop6 = adjust_coordinates_for_scale((1001, 1021), scale_factor)
 dialogue_options = [
     adjust_coordinates_for_scale((1633, 364), scale_factor),  # 对话1 （选项数=3）
     adjust_coordinates_for_scale((1840, 635), scale_factor),  # 对话2 （选项数=3）
-    adjust_coordinates_for_scale((1757, 725), scale_factor),  # 对话3 （选项数=3）
+    adjust_coordinates_for_scale((1719, 848), scale_factor),  # 对话3 （选项数=3）
     adjust_coordinates_for_scale((1673, 466), scale_factor),  # 对话1 （选项数=2）
     adjust_coordinates_for_scale((1422, 718), scale_factor)   # 对话2 （选项数=2）
 ]
