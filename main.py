@@ -70,6 +70,11 @@ def adjust_coordinates_for_scale(coords, scale_factor):
     adjusted_y = int(coords[1] * scale_factor[1])
     return adjusted_x, adjusted_y
 
+def calculate_similarity(image1, image2):
+    # 使用OpenCV计算两个图像的相似度
+    similarity = cv2.matchTemplate(image1, image2, cv2.TM_CCOEFF_NORMED)
+    return np.max(similarity)
+
 # 加载模型
 model_file_path = find_model_file()
 if model_file_path:
@@ -127,6 +132,8 @@ dialogue_options = [
     adjust_coordinates_for_scale((1422, 718), scale_factor)   # 对话2 （选项数=2）
 ]
 
+# 初始化
+last_screenshot = None
 
 try:
     while True:
@@ -137,6 +144,20 @@ try:
             window = windows[0]
             hwnd = window._hWnd
             current_screenshot = capture_screenshot(hwnd)
+            # 计算相似度
+            if last_screenshot is not None:
+                similarity = calculate_similarity(last_screenshot, current_screenshot)
+                if similarity > 0.9:
+                    # 相似度高于阈值时，触发点击
+                    print("Triggering click due to high similarity.")
+                    win_pos = window.topleft
+                    relative_pos1 = relative_pos_action
+                    absolute_pos_double_click1 = (win_pos[0] + relative_pos1[0],
+                                                  win_pos[1] + relative_pos1[1])
+                    pyautogui.click(absolute_pos_double_click1, clicks=2, interval=0.5)
+                    time.sleep(1)
+            # 更新截图
+            last_screenshot = current_screenshot
 
             # 将OpenCV格式的图像转换为适合模型预测的格式
             img_array = cv2.resize(current_screenshot, (150, 250))  # 调整图像大小
