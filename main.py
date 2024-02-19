@@ -5,13 +5,15 @@ import cv2
 import time
 import pyautogui
 import pygetwindow as gw
-import ctypes
 import os
 import numpy as np
 from tensorflow.keras.models import load_model
 import keyboard
+import ctypes
+import random
 
 ctypes.windll.user32.SetProcessDPIAware()
+
 
 def capture_screenshot(hwnd):
     window_dc = win32gui.GetWindowDC(hwnd)
@@ -50,6 +52,24 @@ def check_for_exit():
         return True
     return False
 
+def get_window_size(window_title):
+    win = gw.getWindowsWithTitle(window_title)[0]
+    if win.isMinimized:
+        print("窗口最小化，无法进行计算。")
+        return None
+    else:
+        return (win.size.width, win.size.height)
+
+def calculate_scale_factor(original_size, current_size):
+    scale_factor_w = current_size[0] / original_size[0]
+    scale_factor_h = current_size[1] / original_size[1]
+    return scale_factor_w, scale_factor_h
+
+def adjust_coordinates_for_scale(coords, scale_factor):
+    adjusted_x = int(coords[0] * scale_factor[0])
+    adjusted_y = int(coords[1] * scale_factor[1])
+    return adjusted_x, adjusted_y
+
 # 加载模型
 model_file_path = find_model_file()
 if model_file_path:
@@ -64,41 +84,55 @@ train_class_indices = {'award': 0, 'dialogs': 1, 'scene': 2, 'shop': 3, 'start':
 # 从索引映射回类别名称
 label_map = dict((v, k) for k, v in train_class_indices.items())
 
-# 预先获取的相对位置
-relative_pos_action = (1641, 1040)  #开始行动
-relative_pos_scene2 = (1010, 623) #场景中间/中间造物
+# 预设窗口大小
+original_size = (1930, 1139)  # 预设尺寸
+current_size = (1930, 1139) # assume the same
 
-relative_pos_scene1 = (605, 626) #第一个场景
-relative_pos_scene1_add = (872, 593) #第一个场景（补正）
-relative_pos_scene3 = (1355, 607) #第3个场景
+# 获取当前窗口的大小
+window_title = "MuMu模拟器12"
+current_size = get_window_size(window_title)  # update current size
+scale_factor = calculate_scale_factor(original_size, current_size)
 
-relative_pos_award1 = (731, 952) #战斗奖励1
-relative_pos_award2 = (933, 952) #战斗奖励2/强化意志
-relative_pos_tool_confirm = (972, 1044) #确认领取造物
-relative_pos_upgrade1 = (558, 322)#强化意志1号位
-relative_pos_upgrade2 = (594, 524)#强化意志2号位
-relative_pos_upgrade3 = (608, 673)#强化意志3号位
-relative_pos_upgrade4 = (568, 844) #强化意志4号位
-relative_pos_upgrade_confirm = (1431, 1027) #确认强化意志
-relative_pos_upgrade_leave = (575, 1002) #退出强化意志
+relative_pos_action = adjust_coordinates_for_scale((1641, 1040), scale_factor) # 开始行动
+relative_pos_scene2 = adjust_coordinates_for_scale((1010, 623), scale_factor)  # 场景中间/中间造物
+relative_pos_scene1 = adjust_coordinates_for_scale((605, 626), scale_factor)   # 第一个场景
+relative_pos_scene1_add = adjust_coordinates_for_scale((872, 593), scale_factor)  # 第一个场景（补正）
+relative_pos_scene3 = adjust_coordinates_for_scale((1355, 607), scale_factor)  # 第3个场景
 
-relative_pos_dialogue3 = (1757, 725) #对话3 （双击）
-relative_pos_dialogue3_add = (1806, 858)#对话3 （补正）
+relative_pos_award1 = adjust_coordinates_for_scale((731, 952), scale_factor)  # 奖励领取1
+relative_pos_award2 = adjust_coordinates_for_scale((933, 952), scale_factor)  # 奖励领取2
 
-relative_pos_shop2 = (675, 616)
-relative_pos_shop_confirm = (1176, 808)
-relative_pos_pur_close = (1588, 345) #关闭购物
-relative_pos_shop_leave = (1703, 582)
-relative_pos_shop3 = (982, 627)
-relative_pos_shop4 = (1343, 623)
-relative_pos_shop5 = (1358, 1011)
-relative_pos_shop6 = (1001, 1021)
+relative_pos_tool_confirm = adjust_coordinates_for_scale((972, 1044), scale_factor)  # 确认领取造物
+relative_pos_upgrade1 = adjust_coordinates_for_scale((558, 322), scale_factor)  # 强化意志1号位
+relative_pos_upgrade2 = adjust_coordinates_for_scale((594, 524), scale_factor)  # 强化意志2号位
+relative_pos_upgrade3 = adjust_coordinates_for_scale((608, 673), scale_factor)  # 强化意志3号位
+relative_pos_upgrade4 = adjust_coordinates_for_scale((568, 844), scale_factor)  # 强化意志4号位
+relative_pos_upgrade_confirm = adjust_coordinates_for_scale((1431, 1027), scale_factor)  # 确认强化意志
+relative_pos_upgrade_leave = adjust_coordinates_for_scale((575, 1002), scale_factor)  # 退出强化意志
+
+relative_pos_shop2 = adjust_coordinates_for_scale((675, 616), scale_factor)
+relative_pos_shop_confirm = adjust_coordinates_for_scale((1176, 808), scale_factor)
+relative_pos_pur_close = adjust_coordinates_for_scale((1588, 345), scale_factor)  # 关闭购物
+relative_pos_shop_leave = adjust_coordinates_for_scale((1703, 582), scale_factor) # 关闭商店
+relative_pos_shop3 = adjust_coordinates_for_scale((982, 627), scale_factor)
+relative_pos_shop4 = adjust_coordinates_for_scale((1343, 623), scale_factor)
+relative_pos_shop5 = adjust_coordinates_for_scale((1358, 1011), scale_factor)
+relative_pos_shop6 = adjust_coordinates_for_scale((1001, 1021), scale_factor)
+
+dialogue_options = [
+    adjust_coordinates_for_scale((1633, 364), scale_factor),  # 对话1 （选项数=3）
+    adjust_coordinates_for_scale((1840, 635), scale_factor),  # 对话2 （选项数=3）
+    adjust_coordinates_for_scale((1757, 725), scale_factor),  # 对话3 （选项数=3）
+    adjust_coordinates_for_scale((1673, 466), scale_factor),  # 对话1 （选项数=2）
+    adjust_coordinates_for_scale((1422, 718), scale_factor)   # 对话2 （选项数=2）
+]
+
 
 try:
     while True:
         if check_for_exit():  # 检查是否需要退出
             break
-        windows = gw.getWindowsWithTitle('MuMu模拟器12') #模拟器分辨率设置 1920x1080 280DPI
+        windows = gw.getWindowsWithTitle(window_title)
         if windows:
             window = windows[0]
             hwnd = window._hWnd
@@ -143,25 +177,15 @@ try:
 
             elif predicted_class_index == 1:
                 win_pos = window.topleft
-                relative_pos1 = relative_pos_action
-                relative_pos2 = relative_pos_dialogue3
-                relative_pos3 = relative_pos_dialogue3_add
-                relative_pos4 = (1736, 593) #补正位置
-                absolute_pos_double_click1 = (win_pos[0] + relative_pos1[0],
-                                              win_pos[1] + relative_pos1[1])
-                absolute_pos_double_click2 = (win_pos[0] + relative_pos2[0],
-                                              win_pos[1] + relative_pos2[1])
-                absolute_pos_double_click3 = (win_pos[0] + relative_pos3[0],
-                                              win_pos[1] + relative_pos3[1])
-                absolute_pos_double_click4 = (win_pos[0] + relative_pos4[0],
-                                              win_pos[1] + relative_pos4[1])
-                # 点击
-                pyautogui.click(absolute_pos_double_click1)
-                pyautogui.click(absolute_pos_double_click2, clicks=2, interval=0.25)
-                pyautogui.click(absolute_pos_double_click3, clicks=2, interval=0.25)
-                pyautogui.click(absolute_pos_double_click4, clicks=2, interval=0.25)
-                time.sleep(2)
-            elif predicted_class_index == 2:
+                # 选择2个对话
+                selected_dialogue_i = random.sample(range(len(dialogue_options)), 2)
+                for index in selected_dialogue_i:
+                    pos = dialogue_options[index]
+                    absolute_pos = (win_pos[0] + pos[0], win_pos[1] + pos[1])
+                    # 在计算出的绝对坐标上执行双击操作
+                    pyautogui.click(absolute_pos, clicks=2, interval=0.25)
+
+            elif predicted_class_index == 2:  # 场景选择
                 win_pos = window.topleft
                 relative_pos1 = relative_pos_scene2
                 relative_pos2 = relative_pos_action
@@ -182,13 +206,16 @@ try:
 
             elif predicted_class_index == 3:
                 win_pos = window.topleft
-                relative_pos1 = relative_pos_shop3
+                relative_pos1 = relative_pos_shop2
                 relative_pos2 = relative_pos_shop_confirm
                 relative_pos3 = relative_pos_pur_close
-                relative_pos4 = relative_pos_shop2
+                relative_pos4 = relative_pos_shop3
                 relative_pos5 = relative_pos_shop_confirm
                 relative_pos6 = relative_pos_pur_close
-                relative_pos7 = relative_pos_shop_leave
+                relative_pos7 = relative_pos_shop4
+                relative_pos8 = relative_pos_shop_confirm
+                relative_pos9 = relative_pos_pur_close
+                relative_pos10 = relative_pos_shop_leave
                 absolute_pos_double_click1 = (win_pos[0] + relative_pos1[0],
                                               win_pos[1] + relative_pos1[1])
                 absolute_pos_double_click2 = (win_pos[0] + relative_pos2[0],
@@ -203,6 +230,12 @@ try:
                                               win_pos[1] + relative_pos6[1])
                 absolute_pos_double_click7 = (win_pos[0] + relative_pos7[0],
                                               win_pos[1] + relative_pos7[1])
+                absolute_pos_double_click8 = (win_pos[0] + relative_pos8[0],
+                                              win_pos[1] + relative_pos8[1])
+                absolute_pos_double_click9 = (win_pos[0] + relative_pos9[0],
+                                              win_pos[1] + relative_pos9[1])
+                absolute_pos_double_click10 = (win_pos[0] + relative_pos10[0],
+                                              win_pos[1] + relative_pos10[1])
                 # 点击
                 pyautogui.click(absolute_pos_double_click1)
                 time.sleep(0.5)
@@ -217,6 +250,12 @@ try:
                 pyautogui.click(absolute_pos_double_click6)
                 time.sleep(0.5)
                 pyautogui.click(absolute_pos_double_click7)
+                time.sleep(0.5)
+                pyautogui.click(absolute_pos_double_click8)
+                time.sleep(1)
+                pyautogui.click(absolute_pos_double_click9)
+                time.sleep(0.5)
+                pyautogui.click(absolute_pos_double_click10)
                 time.sleep(1)
             elif predicted_class_index == 4:
                 win_pos = window.topleft
@@ -232,9 +271,9 @@ try:
                 relative_pos2 = relative_pos_upgrade_confirm
                 relative_pos3 = relative_pos_upgrade3
                 relative_pos4 = relative_pos_upgrade_confirm
-                relative_pos5 = relative_pos_upgrade1
+                relative_pos5 = relative_pos_upgrade2
                 relative_pos6 = relative_pos_upgrade_confirm
-                relative_pos7 = relative_pos_upgrade2
+                relative_pos7 = relative_pos_upgrade1
                 relative_pos8 = relative_pos_upgrade_confirm
                 relative_pos9 = relative_pos_upgrade_leave
                 # 计算出绝对坐标
