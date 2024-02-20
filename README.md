@@ -27,8 +27,9 @@ pip install pywin32 opencv-python numpy pyautogui pygetwindow tensorflow==2.15 k
 打开MuMu模拟器，并启动1999肉鸽模式。建议选择低难度。
 
 3.运行脚本:
+
 确保MuMu模拟器窗口处于打开状态（不要开全屏），并且游戏已经进入肉鸽模式。 
-运行main.py。
+运行main.py。开头出现的warning是正常的，不影响脚本使用
 
 4.适用：
 
