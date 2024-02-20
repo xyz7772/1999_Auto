@@ -17,7 +17,8 @@ Python 3.9: 请确保使用Python 3.9（防止出现某些库不兼容的问题�
 1.准备工作:
 
 确保已安装Python 3.9。
-安装所需的Python库。可以通过在命令行中运行以下命令来安装：
+安装PyCharm（推荐）或其他Python IDE
+安装所需的Python库。可以通过在命令行（pyCharm 按alt+F12）中运行以下命令来安装：
 
 pip install pywin32 opencv-python numpy pyautogui pygetwindow tensorflow==2.15 keyboard scikit-image
 
@@ -26,8 +27,6 @@ pip install pywin32 opencv-python numpy pyautogui pygetwindow tensorflow==2.15 k
 打开MuMu模拟器，并启动1999肉鸽模式。建议选择低难度。
 
 3.运行脚本:
-
-使用PyCharm（推荐）或其他Python IDE打开main.py脚本。
 确保MuMu模拟器窗口处于打开状态（不要开全屏），并且游戏已经进入肉鸽模式。 
 运行main.py。
 
